@@ -1,3 +1,20 @@
+#
+# Remarks: Some sensitive parameters cannot be stored on the agent between the 2 steps so 
+# we'll store them in the task context and pass them to the post-test step
+#
+function StoreSensitiveParametersInTaskContext
+{ 
+	param(
+		  [string]$serverUsername,
+		  [string]$serverPassword,
+		  [string]$dbUsername,
+		  [string]$dbPassword)
+
+	SetTaskContextVaraible "serverUsername" $serverUsername
+	SetTaskContextVaraible "serverPassword" $serverPassword
+	SetTaskContextVaraible "dbUsername" $dbUsername
+	SetTaskContextVaraible "dbPassword" $dbPassword
+}
 
 function CreateCommandLineArgs
 {
@@ -17,8 +34,8 @@ function CreateCommandLineArgs
 
     $sb = New-Object -TypeName "System.Text.StringBuilder"; 
 
-    # Append is a fluent API, i.e. it returns the StringBuilder. However powershell will return capture the data and use it in the return value.
-    # To avoid this, force it to ignore the Append return value using [void]
+    # Append is a fluent API, i.e. it returns the StringBuilder. However powershell will return-capture the data and use it in the return value of this function.
+    # To avoid this, ignore the Append return value using [void]
     [void]$sb.Append("begin");
 
     [void]$sb.Append(" /k:""$projectKey"" /n:""$projectName"" /v:""$projectVersion""");
@@ -71,16 +88,6 @@ function CreateCommandLineArgs
     return $sb.ToString();
 }
 
-# Set a variable in a property bag that is accessible by all steps
-# To retrieve the variable use $val = Get-Variable $distributedTaskContext "varName"
-function SetTaskContextVaraible
-{
-    param([string][ValidateNotNullOrEmpty()]$varName, 
-          [string][ValidateNotNullOrEmpty()]$varValue)
-    
-    Write-Host "##vso[task.setvariable variable=$varName;]$varValue"
-}
-
 # Retrieves the url, username and password from the specified generic endpoint.
 # Only UserNamePassword authentication scheme is supported for SonarQube.
 function GetEndpointData
@@ -105,6 +112,16 @@ function GetEndpointData
 
 
 ################# Helpers ######################
+
+# Set a variable in a property bag that is accessible by all steps
+# To retrieve the variable use $val = Get-Variable $distributedTaskContext "varName"
+function SetTaskContextVaraible
+{
+    param([string][ValidateNotNullOrEmpty()]$varName, 
+          [string][ValidateNotNullOrEmpty()]$varValue)
+    
+    Write-Host "##vso[task.setvariable variable=$varName;]$varValue"
+}
 
 #
 # Helper that informs if a "filePath" has been specified. The platform will return the root of the repo / workspace if the user enters nothing.
