@@ -80,6 +80,7 @@ function Add-DbghelpLibrary {
         'Name' = 'LoadLibraryWrapper'
         'MemberDefinition' = $memberDefinition
         'Namespace' = "InvokeIndexSources"
+        'Debug' = $false
     }
     Add-Type @splat
     Write-Verbose "Loading library: $filePath"
@@ -408,6 +409,7 @@ function Remove-DbghelpLibrary {
         'Name' = 'FreeLibraryWrapper'
         'MemberDefinition' = $memberDefinition
         'Namespace' = "InvokeIndexSources"
+        'Debug' = $false
     }
     Add-Type @splat
     Write-Verbose "Unloading library: dbghelp.dll"
