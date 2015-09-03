@@ -65,7 +65,7 @@ function Add-DbghelpLibrary {
 
     # Sanity check to make sure the DLL is where we expect it.
     if (!(Test-Path -LiteralPath $filePath -PathType Leaf)) {
-        throw (Get-LocalizedString -Key 'Could not find dbghelp.dll at: {0}' -ArgumentList $dbghelpFilePath)
+        throw (Get-LocalizedString -Key 'Could not find dbghelp.dll at: {0}' -ArgumentList $filePath)
     }
 
     # Add a type that exposes the native LoadLibrary function. If the type has
