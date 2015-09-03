@@ -84,9 +84,10 @@ function Add-DbghelpLibrary {
     Add-Type @splat
     Write-Verbose "Loading library: $filePath"
     $hModule = [InvokeIndexSources.LoadLibraryWrapper]::LoadLibrary($filePath)
-    if ($hModule -eq $null) {
+    if ($hModule -eq [System.IntPtr]::Zero) {
         $errorCode = [System.Runtime.InteropServices.Marshal]::GetLastWin32Error()
         Write-Warning (Get-LocalizedString -Key "Failed to load dbghelp.dll from location {0} ; Error code: {1}" -ArgumentList $filePath, $errorCode)
+        return
     }
 
     $hModule
